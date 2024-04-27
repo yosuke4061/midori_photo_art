@@ -223,7 +223,7 @@ function setupParticleSystem(scene) {
 
     // ギラギラ光る星のテクスチャを作成
     const particlesMaterial = new THREE.PointsMaterial({
-        size: 1.5,
+        size: 0.5,
         vertexColors: true, // 頂点カラーを使用
         transparent: true,
         blending: THREE.AdditiveBlending,
