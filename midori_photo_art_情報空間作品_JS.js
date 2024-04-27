@@ -56,7 +56,7 @@ function setupSceneElements() {
         imgMesh.add(frame);
 
         // 薄い雲のような平面を複数追加
-        const cloudTexture = textureLoader.load('dark clouds_5614966.png');
+        const cloudTexture = textureLoader.load('dark clouds.png');
         const cloudMaterial = new THREE.MeshBasicMaterial({ map: cloudTexture, transparent: true, opacity: 0.5 });
         const cloudGeometry = new THREE.PlaneGeometry(window.innerWidth, window.innerHeight);
         for (let i = 0; i < 5; i++) {
