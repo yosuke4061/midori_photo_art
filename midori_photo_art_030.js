@@ -46,7 +46,7 @@ function setupSceneElements() {
 
 
 function addRedStrings(scene) {
-    const numStrings = 500; // 紐の数
+    const numStrings = 200; // 紐の数
     const strings = []; // 紐を格納する配列
     const stringMaterial = new THREE.LineBasicMaterial({ color: 0xFF0000 }); // 赤色
 
@@ -67,7 +67,7 @@ function addRedStrings(scene) {
 function animateStrings(strings) {
     strings.forEach(obj => {
         const { line, geometry, points } = obj;
-        const speed = 0.5; // 伸びる速度
+        const speed = 10; // 伸びる速度
 
         function animate() {
             // 点をランダムに動かす
@@ -111,7 +111,7 @@ function addStarField(scene) {
     const starGeometry = new THREE.BufferGeometry();
     const stars = [];
     const starColors = [];
-    const numStars = 20000;
+    const numStars = 2000;
 
     for (let i = 0; i < numStars; i++) {
         stars.push((Math.random() - 0.5) * 2000, (Math.random() - 0.5) * 2000, (Math.random() - 0.5) * 2000);
