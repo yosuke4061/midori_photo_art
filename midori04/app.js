@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const sphere = addSphere(scene); // 球体を追加し、参照を保持
     addImage(scene);
     addBambooForest(scene);
-
+    addCubeParticles(scene, camera, renderer);
     setupControls(canvas, camera, isMobile);
 
     startButton.addEventListener('click', () => {
