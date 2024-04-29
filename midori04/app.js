@@ -55,7 +55,7 @@ function addBambooForest(scene) {
     const particleMaterial = new THREE.PointsMaterial({
         color: bambooColor,
         size: 5,
-        map: new THREE.TextureLoader().load('path_to_leaf_texture.png'), // 葉のテクスチャ
+        map: new THREE.TextureLoader().load('pic02.png'), // 葉のテクスチャ
         blending: THREE.AdditiveBlending,
         transparent: true
     });
