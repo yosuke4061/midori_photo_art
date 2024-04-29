@@ -42,6 +42,7 @@ function addBambooForest(scene) {
     const bambooColor = 0x6B8E23; // 竹の色
     const particles = new THREE.BufferGeometry();
     const positions = [];
+    const size = 10; // パーティクルのサイズを大きくする
 
     for (let i = 0; i < particleCount; i++) {
         const x = Math.random() * 500 - 250; // ランダムなX座標
@@ -54,10 +55,11 @@ function addBambooForest(scene) {
 
     const particleMaterial = new THREE.PointsMaterial({
         color: bambooColor,
-        size: 5,
-        map: new THREE.TextureLoader().load('pic02.png'), // 葉のテクスチャ
-        blending: THREE.AdditiveBlending,
-        transparent: true
+        size: size,
+        map: new THREE.TextureLoader().load('path_to_leaf_texture.png'), // テクスチャのパスを確認
+        alphaTest: 0.5,
+        transparent: true,
+        blending: THREE.AdditiveBlending
     });
 
     const particleSystem = new THREE.Points(particles, particleMaterial);
