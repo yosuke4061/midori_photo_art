@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
     renderer.setSize(window.innerWidth, window.innerHeight);
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xFFFFFF); // 背景色を黒に設定
+    scene.background = new THREE.Color(0x000000); // 背景色を黒に設定
 
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.set(0, 0, 100); 
@@ -16,14 +16,13 @@ document.addEventListener('DOMContentLoaded', function() {
     addGridHelper(scene);
     const sphere = addSphere(scene); // 球体を追加し、参照を保持
     addImage(scene);
-    
-
     setupControls(canvas, camera, isMobile);
 
     startButton.addEventListener('click', () => {
         animate();
-        addCubeParticles(scene, camera, renderer);
-        addBambooForest(scene);
+        addCubeParticles(scene, camera, renderer);   
+        addImageParticles(scene, "pic02.png", renderer, camera);
+        addCubeParticles(scene, camera, renderer);           
         startButton.style.display = 'none';
     });
 
@@ -36,23 +35,63 @@ document.addEventListener('DOMContentLoaded', function() {
     
 });
 
+function addImageParticles(scene, imagePath, renderer, camera) {
+    const particlesCount = 100;
+    const particlesGeometry = new THREE.BufferGeometry();
+    const positions = new Float32Array(particlesCount * 3);
+
+    for (let i = 0; i < particlesCount * 3; i += 3) {
+        positions[i] = Math.random() * 800 - 400; // X座標
+        positions[i + 1] = Math.random() * 800 - 400; // Y座標
+        positions[i + 2] = Math.random() * 800 - 400; // Z座標
+    }
+
+    particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+    // 立方体のジオメトリを作成
+    const cubeGeometry = new THREE.BoxGeometry(10, 10, 10);
+    const cubeMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 }); // 緑色
+
+    // パーティクルとして立方体を追加
+    for (let i = 0; i < particlesCount; i++) {
+        const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+        cube.position.x = positions[i * 3];
+        cube.position.y = positions[i * 3 + 1];
+        cube.position.z = positions[i * 3 + 2];
+        scene.add(cube);
+    }
+
+    function animateParticles() {
+        requestAnimationFrame(animateParticles);
+        scene.children.forEach(child => {
+            if (child instanceof THREE.Mesh) {
+                child.rotation.x += 0.01;
+                child.rotation.y += 0.01;
+            }
+        });
+        renderer.render(scene, camera);
+    }
+
+    animateParticles();
+}
+
 function addCubeParticles(scene, camera, renderer) {
     const particleCount = 100; // パーティクルの数を100に設定
-    const cubeSize = 5; // 立方体のサイズ
+    const sphereSize = 5; // 球体のサイズ
     const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 }); // 緑色でマテリアルを作成
-    const cubes = []; // 立方体を格納する配列
-    const velocities = []; // 各立方体の速度を格納する配列
+    const spheres = []; // 球体を格納する配列
+    const velocities = []; // 各球体の速度を格納する配列
 
     for (let i = 0; i < particleCount; i++) {
-        const geometry = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize);
-        const cube = new THREE.Mesh(geometry, material);
-        cube.position.x = Math.random() * 400 - 200;
-        cube.position.y = Math.random() * 400 - 200;
-        cube.position.z = Math.random() * 400 - 200;
-        scene.add(cube);
-        cubes.push(cube);
+        const geometry = new THREE.SphereGeometry(sphereSize, 16, 16); // 球体のジオメトリを作成
+        const sphere = new THREE.Mesh(geometry, material);
+        sphere.position.x = Math.random() * 400 - 200;
+        sphere.position.y = Math.random() * 400 - 200;
+        sphere.position.z = Math.random() * 400 - 200;
+        scene.add(sphere);
+        spheres.push(sphere);
 
-        // 各立方体にランダムな速度を割り当て
+        // 各球体にランダムな速度を割り当て
         const velocity = new THREE.Vector3(
             (Math.random() - 0.5) * 2, // X方向の速度
             (Math.random() - 0.5) * 2, // Y方向の速度
@@ -65,9 +104,9 @@ function addCubeParticles(scene, camera, renderer) {
     function animate() {
         requestAnimationFrame(animate);
 
-        // 各立方体の位置を更新
-        cubes.forEach((cube, index) => {
-            cube.position.add(velocities[index]);
+        // 各球体の位置を更新
+        spheres.forEach((sphere, index) => {
+            sphere.position.add(velocities[index]);
         });
 
         renderer.render(scene, camera);
@@ -75,65 +114,13 @@ function addCubeParticles(scene, camera, renderer) {
 
     animate(); // アニメーションを開始
 }
+
+
 function addGridHelper(scene) {
     //const gridHelper = new THREE.GridHelper(100, 100);
     //scene.add(gridHelper);
 }
 
-function addBambooForest(scene) {
-    const particleCount = 1000; // パーティクルの数
-    const bambooColor = 0x6B8E23; // 竹の色
-    const particles = new THREE.BufferGeometry();
-    const positions = [];
-    const velocities = []; // 速度を格納する配列
-
-    for (let i = 0; i < particleCount; i++) {
-        const x = Math.random() * 500 - 250; // ランダムなX座標
-        const y = Math.random() * 500 - 250; // ランダムなY座標
-        const z = Math.random() * 500 - 250; // ランダムなZ座標
-        positions.push(x, y, z);
-
-        // 速度ベクトルをランダムに生成
-        const vx = (Math.random() - 0.5) * 2;
-        const vy = (Math.random() - 0.5) * 2;
-        const vz = (Math.random() - 0.5) * 2;
-        velocities.push(new THREE.Vector3(vx, vy, vz));
-    }
-
-    particles.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-
-    const particleMaterial = new THREE.PointsMaterial({
-        color: bambooColor,
-        size: 5,
-        map: new THREE.TextureLoader().load('pic02.png'), // 葉のテクスチャ
-        blending: THREE.AdditiveBlending,
-        transparent: true
-    });
-
-    const particleSystem = new THREE.Points(particles, particleMaterial);
-    scene.add(particleSystem);
-
-    // アニメーション関数を追加
-    function animateBamboo() {
-        requestAnimationFrame(animateBamboo);
-        const positions = particles.attributes.position.array;
-
-        for (let i = 0; i < positions.length; i += 3) {
-            positions[i] += velocities[i / 3].x;
-            positions[i + 1] += velocities[i / 3].y;
-            positions[i + 2] += velocities[i / 3].z;
-
-            // 境界条件の処理
-            if (positions[i] < -250 || positions[i] > 250) velocities[i / 3].x *= -1;
-            if (positions[i + 1] < -250 || positions[i + 1] > 250) velocities[i / 3].y *= -1;
-            if (positions[i + 2] < -250 || positions[i + 2] > 250) velocities[i / 3].z *= -1;
-        }
-
-        particles.attributes.position.needsUpdate = true; // 位置情報を更新
-    }
-
-    animateBamboo(); // アニメーションを開始
-}
 
 
 
@@ -147,7 +134,7 @@ function addSphere(scene) {
 
 function addImage(scene) {
     const textureLoader = new THREE.TextureLoader();
-    textureLoader.load('20181110-DSC00675.jpg', function(texture) {
+    textureLoader.load('_MG_8971.jpg', function(texture) {
         const geometry = new THREE.PlaneGeometry(5, 3);
         const material = new THREE.MeshBasicMaterial({map: texture});
         const imageMesh = new THREE.Mesh(geometry, material);
