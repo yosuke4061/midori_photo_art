@@ -16,12 +16,14 @@ document.addEventListener('DOMContentLoaded', function() {
     addGridHelper(scene);
     const sphere = addSphere(scene); // 球体を追加し、参照を保持
     addImage(scene);
-    addBambooForest(scene);
+    
 
     setupControls(canvas, camera, isMobile);
 
     startButton.addEventListener('click', () => {
         animate();
+        addCubeParticles(scene, camera, renderer);
+        addBambooForest(scene);
         startButton.style.display = 'none';
     });
 
@@ -83,12 +85,19 @@ function addBambooForest(scene) {
     const bambooColor = 0x6B8E23; // 竹の色
     const particles = new THREE.BufferGeometry();
     const positions = [];
+    const velocities = []; // 速度を格納する配列
 
     for (let i = 0; i < particleCount; i++) {
         const x = Math.random() * 500 - 250; // ランダムなX座標
         const y = Math.random() * 500 - 250; // ランダムなY座標
         const z = Math.random() * 500 - 250; // ランダムなZ座標
         positions.push(x, y, z);
+
+        // 速度ベクトルをランダムに生成
+        const vx = (Math.random() - 0.5) * 2;
+        const vy = (Math.random() - 0.5) * 2;
+        const vz = (Math.random() - 0.5) * 2;
+        velocities.push(new THREE.Vector3(vx, vy, vz));
     }
 
     particles.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
@@ -103,6 +112,27 @@ function addBambooForest(scene) {
 
     const particleSystem = new THREE.Points(particles, particleMaterial);
     scene.add(particleSystem);
+
+    // アニメーション関数を追加
+    function animateBamboo() {
+        requestAnimationFrame(animateBamboo);
+        const positions = particles.attributes.position.array;
+
+        for (let i = 0; i < positions.length; i += 3) {
+            positions[i] += velocities[i / 3].x;
+            positions[i + 1] += velocities[i / 3].y;
+            positions[i + 2] += velocities[i / 3].z;
+
+            // 境界条件の処理
+            if (positions[i] < -250 || positions[i] > 250) velocities[i / 3].x *= -1;
+            if (positions[i + 1] < -250 || positions[i + 1] > 250) velocities[i / 3].y *= -1;
+            if (positions[i + 2] < -250 || positions[i + 2] > 250) velocities[i / 3].z *= -1;
+        }
+
+        particles.attributes.position.needsUpdate = true; // 位置情報を更新
+    }
+
+    animateBamboo(); // アニメーションを開始
 }
 
 
