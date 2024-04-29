@@ -8,7 +8,7 @@ function init() {
     scene.background = new THREE.Color(0xffffff); // 背景色を白に設定
 
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.set(0, 50, 300);
+    camera.position.set(0, 50, 200);
 
     renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -58,12 +58,20 @@ function addRotatingSphere() {
 
     rotateSphere(); // 回転アニメーションを開始
 }
+
 function addBackground() {
     const loader = new THREE.GLTFLoader();
-    const radius = 100; // 円の半径
-    const numObjects = 180; // 配置するオブジェクトの数
+    const radius = 150; // 円の半径
+    const numObjects = 120; // 配置するオブジェクトの数
 
     loader.load('0e66d003e070_cb873327fca1_Wall_with_luxurious.glb', function(gltf) {
+        const material = new THREE.MeshPhongMaterial({ color: 0xffffff }); // 光を反射するマテリアルに変更
+        gltf.scene.traverse(function (child) {
+            if (child.isMesh) {
+                child.material = material;
+            }
+        });
+
         for (let i = 0; i < numObjects; i++) {
             const angle = 2 * Math.PI * (i / numObjects); // 0 から 2π までの角度
 
@@ -73,7 +81,6 @@ function addBackground() {
                 radius * Math.cos(angle), // X座標
                 radius * Math.sin(angle),
                 0                      // Y座標
-               
             );
             model.rotation.y = -angle + Math.PI / 2; // 各モデルが中心を向くように調整
             scene.add(model);
@@ -93,7 +100,7 @@ function addParticles() {
         let particle;
         switch (particleType) {
             case 'sphere':
-                const sphereGeometry = new THREE.SphereGeometry(0.6, 32, 32);
+                const sphereGeometry = new THREE.SphereGeometry(0.2, 32, 32);
                 const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0x0000ff });
                 particle = new THREE.Mesh(sphereGeometry, sphereMaterial);
                 break;
