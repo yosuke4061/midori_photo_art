@@ -30,8 +30,49 @@ document.addEventListener('DOMContentLoaded', function() {
         sphere.rotation.y += 0.01; // 球体を回転させる
         renderer.render(scene, camera);
     }
+
+    
 });
 
+function addCubeParticles(scene, camera, renderer) {
+    const particleCount = 100; // パーティクルの数を100に設定
+    const cubeSize = 5; // 立方体のサイズ
+    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 }); // 緑色でマテリアルを作成
+    const cubes = []; // 立方体を格納する配列
+    const velocities = []; // 各立方体の速度を格納する配列
+
+    for (let i = 0; i < particleCount; i++) {
+        const geometry = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize);
+        const cube = new THREE.Mesh(geometry, material);
+        cube.position.x = Math.random() * 400 - 200;
+        cube.position.y = Math.random() * 400 - 200;
+        cube.position.z = Math.random() * 400 - 200;
+        scene.add(cube);
+        cubes.push(cube);
+
+        // 各立方体にランダムな速度を割り当て
+        const velocity = new THREE.Vector3(
+            (Math.random() - 0.5) * 2, // X方向の速度
+            (Math.random() - 0.5) * 2, // Y方向の速度
+            (Math.random() - 0.5) * 2  // Z方向の速度
+        );
+        velocities.push(velocity);
+    }
+
+    // アニメーション関数を定義
+    function animate() {
+        requestAnimationFrame(animate);
+
+        // 各立方体の位置を更新
+        cubes.forEach((cube, index) => {
+            cube.position.add(velocities[index]);
+        });
+
+        renderer.render(scene, camera);
+    }
+
+    animate(); // アニメーションを開始
+}
 function addGridHelper(scene) {
     //const gridHelper = new THREE.GridHelper(100, 100);
     //scene.add(gridHelper);
@@ -42,7 +83,6 @@ function addBambooForest(scene) {
     const bambooColor = 0x6B8E23; // 竹の色
     const particles = new THREE.BufferGeometry();
     const positions = [];
-    const size = 10; // パーティクルのサイズを大きくする
 
     for (let i = 0; i < particleCount; i++) {
         const x = Math.random() * 500 - 250; // ランダムなX座標
@@ -55,11 +95,10 @@ function addBambooForest(scene) {
 
     const particleMaterial = new THREE.PointsMaterial({
         color: bambooColor,
-        size: size,
-        map: new THREE.TextureLoader().load('pic02.png'), // テクスチャのパスを確認
-        alphaTest: 0.5,
-        transparent: true,
-        blending: THREE.AdditiveBlending
+        size: 5,
+        map: new THREE.TextureLoader().load('pic02.png'), // 葉のテクスチャ
+        blending: THREE.AdditiveBlending,
+        transparent: true
     });
 
     const particleSystem = new THREE.Points(particles, particleMaterial);
