@@ -93,7 +93,7 @@ function addParticles() {
         let particle;
         switch (particleType) {
             case 'sphere':
-                const sphereGeometry = new THREE.SphereGeometry(0.2, 32, 32);
+                const sphereGeometry = new THREE.SphereGeometry(0.6, 32, 32);
                 const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0x0000ff });
                 particle = new THREE.Mesh(sphereGeometry, sphereMaterial);
                 break;
